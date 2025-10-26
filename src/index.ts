@@ -10,6 +10,8 @@ import healthRouter from './api/health.js';
 import agentRouter from './api/agent.js';
 import automationRouter from './api/automation.js';
 import labslipRouter from './api/labslip.js';
+import { createCrownWorkOrderRoutes } from './api/crownWorkOrderRoutes.js';
+import { getSupabase } from './database/supabase.js';
 
 // Load environment variables
 dotenv.config();
@@ -68,6 +70,7 @@ app.get('/', (req: Request, res: Response) => {
       agent: '/api/agent',
       automation: '/api/automation',
       labslip: '/api/labslip',
+      workOrders: '/api/work-orders',
     },
     practice: {
       name: 'Huntington Beach Dental Center',
@@ -85,6 +88,16 @@ app.use('/api/health', healthRouter);
 app.use('/api/agent', agentRouter);
 app.use('/api/automation', automationRouter);
 app.use('/api/labslip', labslipRouter);
+
+// Crown Work Order routes (Day 3)
+try {
+  const supabase = getSupabase();
+  const crownWorkOrderRouter = createCrownWorkOrderRoutes(supabase, './output');
+  app.use('/api', crownWorkOrderRouter);
+  logger.info('✅ Crown Work Order routes mounted successfully');
+} catch (error) {
+  logger.warning('Crown Work Order routes not mounted - Supabase not configured');
+}
 
 // ============ ERROR HANDLING ============
 
@@ -138,6 +151,7 @@ function startServer() {
       logger.info(`🤖 AI Agent: http://localhost:${PORT}/api/agent`);
       logger.info(`⚙️  Automation: http://localhost:${PORT}/api/automation`);
       logger.info(`🔬 Lab Slips: http://localhost:${PORT}/api/labslip`);
+      logger.info(`👑 Crown Work Orders: http://localhost:${PORT}/api/work-orders`);
       
       // Log configuration status
       const hasSupabase = !!process.env.SUPABASE_URL && !!process.env.SUPABASE_SERVICE_ROLE_KEY;

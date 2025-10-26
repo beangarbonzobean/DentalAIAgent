@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crown Work Order - CWO-20251026-001</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Arial', 'Helvetica', sans-serif;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #333;
+      padding: 20px;
+      background: white;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      border: 2px solid #2c3e50;
+      padding: 30px;
+    }
+    
+    .header {
+      text-align: center;
+      border-bottom: 3px solid #3498db;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .header h1 {
+      color: #2c3e50;
+      font-size: 28px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    .header .subtitle {
+      color: #7f8c8d;
+      font-size: 14px;
+      font-style: italic;
+    }
+    
+    .work-order-number {
+      background: #3498db;
+      color: white;
+      padding: 10px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      margin: 20px 0;
+      border-radius: 5px;
+      letter-spacing: 1px;
+    }
+    
+    .section {
+      margin-bottom: 25px;
+      padding: 15px;
+      border: 1px solid #ecf0f1;
+      border-radius: 5px;
+      background: #f8f9fa;
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #3498db;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    
+    .info-item {
+      padding: 8px;
+      background: white;
+      border-radius: 3px;
+    }
+    
+    .info-label {
+      font-weight: bold;
+      color: #7f8c8d;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    
+    .info-value {
+      color: #2c3e50;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .full-width {
+      grid-column: 1 / -1;
+    }
+    
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    
+    .highlight-box {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 15px 0;
+    }
+    
+    .highlight-box .label {
+      font-weight: bold;
+      color: #856404;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+    
+    .highlight-box .value {
+      font-size: 18px;
+      color: #856404;
+      font-weight: bold;
+    }
+    
+    .instructions {
+      background: white;
+      border-left: 4px solid #e74c3c;
+      padding: 15px;
+      margin: 15px 0;
+      min-height: 80px;
+    }
+    
+    .instructions-title {
+      font-weight: bold;
+      color: #e74c3c;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    
+    .instructions-content {
+      color: #2c3e50;
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+    
+    .footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 2px solid #ecf0f1;
+      text-align: center;
+      color: #7f8c8d;
+      font-size: 11px;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 6px 15px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .status-pending {
+      background: #ffeaa7;
+      color: #d63031;
+    }
+    
+    .priority-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 15px;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    
+    .priority-routine {
+      background: #dfe6e9;
+      color: #2d3436;
+    }
+    
+    .priority-urgent {
+      background: #fdcb6e;
+      color: #2d3436;
+    }
+    
+    .priority-asap {
+      background: #d63031;
+      color: white;
+    }
+    
+    .practice-info {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+    
+    .practice-name {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .practice-details {
+      font-size: 11px;
+      color: #7f8c8d;
+    }
+    
+    @media print {
+      body {
+        padding: 0;
+      }
+      .container {
+        border: none;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <div class="practice-info">
+      <div class="practice-name">Huntington Beach Dental Center</div>
+      <div class="practice-details">
+        17692 Beach Blvd STE 310, Huntington Beach, CA 92647<br>
+        Phone: 714-842-5035
+      </div>
+    </div>
+    
+    
+    <div class="header">
+      <h1>Internal Crown Work Order</h1>
+      <div class="subtitle">Ceramill Same-Day Crown Production</div>
+    </div>
+    
+    <div class="work-order-number">
+      Work Order #CWO-20251026-001
+    </div>
+    
+    <div style="text-align: center; margin: 15px 0;">
+      <span class="priority-badge priority-asap">ASAP</span>
+      <span class="status-badge status-pending">Pending</span>
+    </div>
+    
+    <div class="info-grid" style="margin: 20px 0;">
+      <div class="info-item">
+        <div class="info-label">Assigned To</div>
+        <div class="info-value">Lab Tech</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Created</div>
+        <div class="info-value">10/26/2025, 10:30 AM</div>
+      </div>
+      
+      <div class="info-item">
+        <div class="info-label">Due Date</div>
+        <div class="info-value" style="color: #e74c3c; font-weight: bold;">10/27/2025</div>
+      </div>
+      
+    </div>
+    
+    
+    <div class="section">
+      <div class="section-title">Patient Information</div>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">Patient Name</div>
+          <div class="info-value">John Smith</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Patient ID</div>
+          <div class="info-value">#1001</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Date of Birth</div>
+          <div class="info-value">03/14/1975</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Age</div>
+          <div class="info-value">50 years</div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-label">Chart Number</div>
+          <div class="info-value">JS-1001</div>
+        </div>
+        
+      </div>
+    </div>
+    
+    
+    <div class="section">
+      <div class="section-title">Procedure Details</div>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">Procedure Code</div>
+          <div class="info-value" style="font-weight: bold; color: #3498db;">D2740</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Procedure ID</div>
+          <div class="info-value">#5001</div>
+        </div>
+        <div class="info-item full-width">
+          <div class="info-label">Description</div>
+          <div class="info-value">Crown - porcelain/ceramic substrate</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Provider</div>
+          <div class="info-value">Dr. Ben Young</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Procedure Date</div>
+          <div class="info-value">10/26/2025</div>
+        </div>
+      </div>
+      
+      <div class="highlight-box" style="margin-top: 15px;">
+        <div class="label">Tooth Number</div>
+        <div class="value" style="font-size: 36px;">#14</div>
+      </div>
+    </div>
+    
+    
+    <div class="section">
+      <div class="section-title">Crown Specifications</div>
+      
+      <div class="highlight-box">
+        <div class="label">Shade</div>
+        <div class="value">A2 (Vita Classical)</div>
+      </div>
+      
+      <div class="specs-grid">
+        <div class="info-item">
+          <div class="info-label">Material</div>
+          <div class="info-value">Zirconia</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Prep Type</div>
+          <div class="info-value">Full Crown</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Margin</div>
+          <div class="info-value">Chamfer</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Occlusion</div>
+          <div class="info-value">Normal</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Contacts</div>
+          <div class="info-value">Normal</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Contour</div>
+          <div class="info-value">Anatomical</div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="section">
+      <div class="section-title">Ceramill Workflow</div>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">Scan Type</div>
+          <div class="info-value">Intraoral</div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-label">Scanner</div>
+          <div class="info-value">Medit i900</div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-label">Design Software</div>
+          <div class="info-value">Ceramill Mind</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Milling Machine</div>
+          <div class="info-value">Ceramill Motion 2</div>
+        </div>
+        
+        
+        
+      </div>
+    </div>
+    
+    
+      <div class="instructions">
+        <div class="instructions-title">⚠️ Special Instructions</div>
+        <div class="instructions-content">Rush case - patient appointment tomorrow</div>
+      </div>
+      
+      <div class="instructions">
+        <div class="instructions-title">📋 Clinical Notes</div>
+        <div class="instructions-content">Anterior tooth. Patient wants natural appearance matching adjacent teeth.</div>
+      </div>
+      
+    
+    <div class="footer">
+      <p><strong>Huntington Beach Dental Center</strong> - Internal Crown Production</p>
+      <p>Work Order: CWO-20251026-001 | Generated: 10/26/2025, 04:15 PM</p>
+      <p style="margin-top: 10px; font-style: italic;">
+        This work order is for internal use only. Please verify all specifications before proceeding.
+      </p>
+    </div>
+    
+  </div>
+</body>
+</html>

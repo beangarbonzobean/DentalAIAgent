@@ -10,6 +10,17 @@ The system is designed to bridge dental practice management software (Open Denta
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (Day 3 - October 26, 2025)
+
+**Crown Work Order System Integration**
+- Integrated internal crown work order management system for Ceramill same-day crown production
+- Extended `lab_slips` table to support crown work orders alongside traditional lab slips
+- Added crown procedure detection service (recognizes D2740, D2750, D2751, D2752)
+- Implemented PDF work order generation service for printable lab documentation
+- Created comprehensive REST API endpoints under `/api/work-orders`
+- **Database Migration Required**: Run `migrations/add_crown_work_order_fields.sql` in Supabase Studio
+- See `CROWN_WORK_ORDER_README.md` for complete documentation and API usage examples
+
 ## System Architecture
 
 ### Backend Architecture
@@ -26,6 +37,7 @@ The API follows RESTful conventions with all endpoints prefixed under `/api`:
 - `/api/agent/chat` - AI-powered conversational interface using Claude/Gemini
 - `/api/automation` - CRUD operations for automation records
 - `/api/labslip` - Lab slip management endpoints
+- `/api/work-orders` - Crown work order management for internal Ceramill production (Day 3)
 
 **Authentication & Security**
 - Helmet.js for security headers
@@ -45,7 +57,7 @@ The API follows RESTful conventions with all endpoints prefixed under `/api`:
 - Managed PostgreSQL database via Supabase
 - Service role key authentication for server-side operations
 - Schema managed with Drizzle ORM
-- Tables include: `automations`, `lab_slips`, and `users`
+- Tables include: `automations`, `lab_slips` (extended for crown work orders), and `users`
 
 **Graceful Degradation**
 The application handles missing Supabase credentials gracefully:
@@ -57,6 +69,11 @@ The application handles missing Supabase credentials gracefully:
 - Drizzle Kit for migrations (stored in `/migrations`)
 - Schema definitions in `shared/schema.ts`
 - Type-safe database operations with Drizzle ORM
+- **Day 3 Update**: The `lab_slips` table has been extended to support both traditional lab slips and internal crown work orders
+  - New columns added for Open Dental integration, patient/procedure data, and crown specifications
+  - Status constraint updated to support crown workflow statuses (pending → scanned → designed → milling → sintering → finishing → qc → ready → seated)
+  - See `migrations/add_crown_work_order_fields.sql` for the full migration script
+  - **IMPORTANT**: Run this migration in Supabase Studio before using crown work order features
 
 ### External Dependencies
 
@@ -132,8 +149,15 @@ The application handles missing Supabase credentials gracefully:
 - `/client` - React frontend application
 - `/server` - Express server bootstrap and route definitions
 - `/src` - Main API implementation (handlers, integrations, utilities)
+  - `/src/api` - Express route handlers
+  - `/src/database` - Supabase query modules
+  - `/src/services` - Business logic (crown detection, PDF generation)
+  - `/src/types` - TypeScript type definitions
+  - `/src/integrations` - External API clients (Open Dental, AI)
+  - `/src/utils` - Logging and utilities
 - `/shared` - Shared TypeScript types and database schema
-- `/migrations` - Drizzle database migrations
+- `/migrations` - Database migration scripts
+- `/output` - Generated PDF work orders (crown work order system)
 
 **Development Tools**
 - Hot module replacement in development
