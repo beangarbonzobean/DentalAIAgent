@@ -1,0 +1,40 @@
+{
+  "name": "dental-ai-agent-day4",
+  "version": "1.0.0",
+  "description": "Day 4: Lab Slip Automation (Part 2) - Open Dental integration, email automation, UI, and AI commands",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc",
+    "lint": "eslint src/**/*.ts"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "nodemailer": "^6.9.7",
+    "openai": "^4.20.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "next": "^14.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/nodemailer": "^6.4.14",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "typescript": "^5.3.0",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "eslint": "^8.55.0"
+  },
+  "keywords": [
+    "dental",
+    "ai",
+    "lab-slips",
+    "open-dental",
+    "automation"
+  ],
+  "author": "Manus AI",
+  "license": "MIT"
+}
+
