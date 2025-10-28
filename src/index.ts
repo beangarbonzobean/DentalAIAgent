@@ -10,6 +10,7 @@ import healthRouter from './api/health.js';
 import agentRouter from './api/agent.js';
 import automationRouter from './api/automation.js';
 import labslipRouter from './api/labslip.js';
+import aiAgentRouter from './api/aiAgent.js';
 import { createCrownWorkOrderRoutes } from './api/crownWorkOrderRoutes.js';
 import { getSupabase } from './database/supabase.js';
 
@@ -71,6 +72,7 @@ app.get('/', (req: Request, res: Response) => {
       automation: '/api/automation',
       labslip: '/api/labslip',
       workOrders: '/api/work-orders',
+      aiAgent: '/api/ai-agent',
     },
     practice: {
       name: 'Huntington Beach Dental Center',
@@ -88,6 +90,7 @@ app.use('/api/health', healthRouter);
 app.use('/api/agent', agentRouter);
 app.use('/api/automation', automationRouter);
 app.use('/api/labslip', labslipRouter);
+app.use('/api/ai-agent', aiAgentRouter); // Day 4 - AI Commands
 
 // Crown Work Order routes (Day 3)
 try {
@@ -152,6 +155,7 @@ function startServer() {
       logger.info(`⚙️  Automation: http://localhost:${PORT}/api/automation`);
       logger.info(`🔬 Lab Slips: http://localhost:${PORT}/api/labslip`);
       logger.info(`👑 Crown Work Orders: http://localhost:${PORT}/api/work-orders`);
+      logger.info(`🧠 AI Commands: http://localhost:${PORT}/api/ai-agent`);
       
       // Log configuration status
       const hasSupabase = !!process.env.SUPABASE_URL && !!process.env.SUPABASE_SERVICE_ROLE_KEY;
