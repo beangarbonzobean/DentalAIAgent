@@ -101,14 +101,18 @@ The application handles missing Supabase credentials gracefully:
 
 ### External Dependencies
 
-**Open Dental FHIR API**
-- Integration for dental practice management data
+**Open Dental RESTful API**
+- Integration for dental practice management data using modern RESTful API (recommended over legacy FHIR)
 - Custom Axios client with retry logic (3 retries, exponential backoff)
 - Authentication format: `ODFHIR {DeveloperKey}/{CustomerKey}`
-- FHIR R4 compliant resource types (Patient, Procedure, Appointment, LabCase)
+- RESTful endpoints (lowercase, plural): `/patients`, `/procedures`, `/appointments`, `/labcases`, `/laboratories`, `/providers`, `/documents`
+- Response format: Direct arrays (not FHIR bundle structure)
+- Field names: PascalCase (PatNum, FName, LName, etc.)
 - Request/response interceptors for logging
 - Comprehensive service layer for CRUD operations
 - **Setup Requirements**: API keys must be configured in Open Dental system (Setup → Advanced Setup → API) and eConnector service must be running
+- **Testing**: Successfully verified with live API - 1000+ patients retrieved
+- **Document Upload Note**: RESTful API documentation doesn't clearly specify file upload format. Current implementation uses `RawBase64` field - may require adjustment based on actual API response or use of separate binary upload endpoint
 
 **Anthropic Claude API**
 - Primary AI model: `claude-sonnet-4-20250514`

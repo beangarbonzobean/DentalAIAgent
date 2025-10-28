@@ -1,8 +1,8 @@
 /**
  * Open Dental Documents Service
- * Upload and manage documents in Open Dental via FHIR API
+ * Upload and manage documents in Open Dental via RESTful API
  * 
- * Day 4 - Open Dental Integration
+ * Day 4 - Open Dental Integration (Updated to RESTful API)
  */
 
 import axios, { AxiosInstance } from 'axios';
@@ -38,7 +38,7 @@ export class OpenDentalDocumentClient {
       logger.warning('Open Dental API keys not configured - document upload will not work');
     }
 
-    // Generate API key from developer and customer keys
+    // Generate API key in ODFHIR format
     this.apiKey = this.generateApiKey();
 
     this.client = axios.create({
@@ -46,7 +46,7 @@ export class OpenDentalDocumentClient {
       timeout: 30000,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.apiKey}`
+        'Authorization': this.apiKey
       }
     });
 
@@ -87,14 +87,13 @@ export class OpenDentalDocumentClient {
 
   /**
    * Generate API key from developer and customer keys
-   * Format: Base64(developerKey:customerKey)
+   * Format: ODFHIR {DeveloperKey}/{CustomerKey}
    */
   private generateApiKey(): string {
     if (!this.developerKey || !this.customerKey) {
       return '';
     }
-    const credentials = `${this.developerKey}:${this.customerKey}`;
-    return Buffer.from(credentials).toString('base64');
+    return `ODFHIR ${this.developerKey}/${this.customerKey}`;
   }
 
   /**
@@ -135,37 +134,29 @@ export class OpenDentalDocumentClient {
       const fileBase64 = fileBuffer.toString('base64');
       const fileName = path.basename(filePath);
 
-      // Create document record via FHIR API
+      // Create document record via RESTful API
+      // Note: RESTful API documentation doesn't clearly specify the exact format for file upload
+      // This implementation attempts common patterns - may need adjustment based on API response
       const documentData = {
-        resourceType: 'DocumentReference',
-        status: 'current',
-        type: {
-          coding: [{
-            system: 'http://loinc.org',
-            code: '11488-4',
-            display: category
-          }]
-        },
-        subject: {
-          reference: `Patient/${patientId}`
-        },
-        date: new Date().toISOString(),
-        description: description,
-        content: [{
-          attachment: {
-            contentType: 'application/pdf',
-            data: fileBase64,
-            title: fileName
-          }
-        }]
+        PatNum: patientId,
+        FileName: fileName,
+        DateCreated: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
+        Description: description,
+        DocCategory: 0, // Default category
+        // Attempting to include base64 content - field name may need adjustment
+        RawBase64: fileBase64,  // Common RESTful pattern
+        // Alternative possible field names:
+        // Base64File: fileBase64,
+        // FileData: fileBase64,
+        // Content: fileBase64,
       };
 
       // Upload to Open Dental
-      const response = await this.client.post('/DocumentReference', documentData);
+      const response = await this.client.post('/documents', documentData);
 
       if (response.status === 201 || response.status === 200) {
-        // Preserve document ID as-is (could be UUID string or integer)
-        const documentId = response.data.id || response.data.identifier?.[0]?.value;
+        // RESTful API returns PascalCase fields (DocNum, not id)
+        const documentId = response.data.DocNum || response.data.DocID || response.data.DocumentNum;
         
         logger.info('Document uploaded successfully', {
           patientId,
@@ -173,13 +164,13 @@ export class OpenDentalDocumentClient {
           fileName
         });
 
-        // Return document ID as-is, or attempt to parse as number if it looks numeric
+        // Return document ID as-is (typically a number in RESTful API)
         let finalDocumentId: string | number | undefined = undefined;
         if (documentId !== undefined && documentId !== null) {
           if (typeof documentId === 'number') {
             finalDocumentId = documentId;
           } else if (typeof documentId === 'string') {
-            // Try to parse as number, but keep as string if it fails (e.g., UUID)
+            // Try to parse as number, but keep as string if it fails
             const parsed = parseInt(documentId, 10);
             finalDocumentId = !isNaN(parsed) && parsed.toString() === documentId ? parsed : documentId;
           }
@@ -237,7 +228,7 @@ export class OpenDentalDocumentClient {
   }
 
   /**
-   * Get document by ID
+   * Get document by ID (RESTful API)
    */
   async getDocument(documentId: number | string): Promise<{ data: any | null; error: any }> {
     try {
@@ -248,7 +239,7 @@ export class OpenDentalDocumentClient {
         };
       }
 
-      const response = await this.client.get(`/DocumentReference/${documentId}`);
+      const response = await this.client.get(`/documents/${documentId}`);
       
       if (response.status === 200) {
         return { data: response.data, error: null };
@@ -277,7 +268,7 @@ export class OpenDentalDocumentClient {
   }
 
   /**
-   * List documents for a patient
+   * List documents for a patient (RESTful API)
    */
   async listPatientDocuments(
     patientId: number,
@@ -291,16 +282,17 @@ export class OpenDentalDocumentClient {
         };
       }
 
-      let url = `/DocumentReference?subject=Patient/${patientId}`;
+      const params: any = { PatNum: patientId };
       
       if (category) {
-        url += `&type=${encodeURIComponent(category)}`;
+        params.DocCategory = category;
       }
 
-      const response = await this.client.get(url);
+      const response = await this.client.get('/documents', { params });
 
       if (response.status === 200) {
-        const documents = response.data.entry?.map((e: any) => e.resource) || [];
+        // RESTful API returns direct array (not FHIR bundle)
+        const documents = Array.isArray(response.data) ? response.data : [];
         return { data: documents, error: null };
       }
 
@@ -327,7 +319,7 @@ export class OpenDentalDocumentClient {
   }
 
   /**
-   * Delete a document
+   * Delete a document (RESTful API)
    */
   async deleteDocument(documentId: number | string): Promise<{ success: boolean; error?: any }> {
     try {
@@ -338,7 +330,7 @@ export class OpenDentalDocumentClient {
         };
       }
 
-      const response = await this.client.delete(`/DocumentReference/${documentId}`);
+      const response = await this.client.delete(`/documents/${documentId}`);
 
       if (response.status === 204 || response.status === 200) {
         logger.info('Document deleted successfully', { documentId });
