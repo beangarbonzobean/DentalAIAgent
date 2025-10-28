@@ -25,12 +25,12 @@ export const openDentalClient: AxiosInstance = axios.create({
 });
 
 // Add authentication headers if keys are available
-if (OPENDENTAL_DEVELOPER_KEY) {
-  openDentalClient.defaults.headers.common['Authorization'] = OPENDENTAL_DEVELOPER_KEY;
-}
-
-if (OPENDENTAL_CUSTOMER_KEY) {
-  openDentalClient.defaults.headers.common['Customer-Key'] = OPENDENTAL_CUSTOMER_KEY;
+// Open Dental uses format: "ODFHIR {DeveloperKey}/{CustomerKey}"
+if (OPENDENTAL_DEVELOPER_KEY && OPENDENTAL_CUSTOMER_KEY) {
+  openDentalClient.defaults.headers.common['Authorization'] = 
+    `ODFHIR ${OPENDENTAL_DEVELOPER_KEY}/${OPENDENTAL_CUSTOMER_KEY}`;
+} else if (OPENDENTAL_DEVELOPER_KEY || OPENDENTAL_CUSTOMER_KEY) {
+  logger.warning('Open Dental API keys incomplete - both OPENDENTAL_DEVELOPER_KEY and OPENDENTAL_CUSTOMER_KEY are required');
 }
 
 /**

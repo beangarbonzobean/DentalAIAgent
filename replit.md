@@ -104,9 +104,11 @@ The application handles missing Supabase credentials gracefully:
 **Open Dental FHIR API**
 - Integration for dental practice management data
 - Custom Axios client with retry logic (3 retries, exponential backoff)
+- Authentication format: `ODFHIR {DeveloperKey}/{CustomerKey}`
 - FHIR R4 compliant resource types (Patient, Procedure, Appointment, LabCase)
 - Request/response interceptors for logging
 - Comprehensive service layer for CRUD operations
+- **Setup Requirements**: API keys must be configured in Open Dental system (Setup → Advanced Setup → API) and eConnector service must be running
 
 **Anthropic Claude API**
 - Primary AI model: `claude-sonnet-4-20250514`
