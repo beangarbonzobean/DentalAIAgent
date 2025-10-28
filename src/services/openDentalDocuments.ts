@@ -164,6 +164,7 @@ export class OpenDentalDocumentClient {
       const response = await this.client.post('/DocumentReference', documentData);
 
       if (response.status === 201 || response.status === 200) {
+        // Preserve document ID as-is (could be UUID string or integer)
         const documentId = response.data.id || response.data.identifier?.[0]?.value;
         
         logger.info('Document uploaded successfully', {
@@ -172,9 +173,21 @@ export class OpenDentalDocumentClient {
           fileName
         });
 
+        // Return document ID as-is, or attempt to parse as number if it looks numeric
+        let finalDocumentId: string | number | undefined = undefined;
+        if (documentId !== undefined && documentId !== null) {
+          if (typeof documentId === 'number') {
+            finalDocumentId = documentId;
+          } else if (typeof documentId === 'string') {
+            // Try to parse as number, but keep as string if it fails (e.g., UUID)
+            const parsed = parseInt(documentId, 10);
+            finalDocumentId = !isNaN(parsed) && parsed.toString() === documentId ? parsed : documentId;
+          }
+        }
+
         return {
           success: true,
-          documentId: documentId ? parseInt(documentId) : undefined,
+          documentId: finalDocumentId,
           message: 'Document uploaded successfully'
         };
       }
@@ -226,7 +239,7 @@ export class OpenDentalDocumentClient {
   /**
    * Get document by ID
    */
-  async getDocument(documentId: number): Promise<{ data: any | null; error: any }> {
+  async getDocument(documentId: number | string): Promise<{ data: any | null; error: any }> {
     try {
       if (!this.apiKey) {
         return {
@@ -316,7 +329,7 @@ export class OpenDentalDocumentClient {
   /**
    * Delete a document
    */
-  async deleteDocument(documentId: number): Promise<{ success: boolean; error?: any }> {
+  async deleteDocument(documentId: number | string): Promise<{ success: boolean; error?: any }> {
     try {
       if (!this.apiKey) {
         return {

@@ -204,14 +204,16 @@ Do not include any explanation, just the JSON.`;
     try {
       const filters: any = {};
       
+      // Normalize parameter names from snake_case to camelCase
       if (params.status) {
         filters.status = params.status;
       }
-      if (params.patient_id) {
-        filters.patientId = parseInt(params.patient_id);
+      if (params.patient_id || params.patientId) {
+        const patientId = params.patient_id || params.patientId;
+        filters.patientId = parseInt(patientId);
       }
-      if (params.assigned_to) {
-        filters.assignedTo = params.assigned_to;
+      if (params.assigned_to || params.assignedTo) {
+        filters.assignedTo = params.assigned_to || params.assignedTo;
       }
 
       const { data, error } = await this.queries.listWorkOrders(filters, params.limit || 50);
@@ -284,8 +286,10 @@ Do not include any explanation, just the JSON.`;
    */
   private async handleUpdateStatus(params: Record<string, any>): Promise<CommandExecutionResult> {
     try {
-      const labSlipId = params.lab_slip_id || params.id;
-      const status = params.status;
+      // Normalize parameter names - support both status and new_status
+      const labSlipId = params.lab_slip_id || params.labSlipId || params.id;
+      const status = params.status || params.new_status || params.newStatus;
+      const notes = params.notes || params.note;
       
       if (!labSlipId || !status) {
         return {
@@ -298,7 +302,7 @@ Do not include any explanation, just the JSON.`;
       const { data, error } = await this.queries.updateWorkOrderStatus(
         labSlipId,
         status,
-        params.notes
+        notes
       );
 
       if (error || !data) {

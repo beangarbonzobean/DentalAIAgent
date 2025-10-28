@@ -53,7 +53,7 @@ export interface OpenDentalDocument {
 
 export interface OpenDentalUploadResult {
   success: boolean;
-  documentId?: number;
+  documentId?: number | string; // Support both number and string IDs
   message: string;
   error?: string;
 }
